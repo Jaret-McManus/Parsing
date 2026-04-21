@@ -1,12 +1,12 @@
 CXX  := g++
 SRCD := src
-TSTD := tests
+# TSTD := tests
 BLDD := build
 BIND := bin
 INCD := include
 
-EXEC := image
-TEST_EXEC := $(EXEC)_tests
+EXEC := parser
+# TEST_EXEC := $(EXEC)_tests
 
 MAIN  := $(BLDD)/main.o
 
@@ -14,8 +14,8 @@ ALL_SRCF := $(shell find $(SRCD) -type f -name *.cpp)
 ALL_OBJF := $(patsubst $(SRCD)/%,$(BLDD)/%,$(ALL_SRCF:.cpp=.o))
 ALL_FUNCF := $(filter-out $(MAIN) $(AUX), $(ALL_OBJF))
 
-TEST_SRCF := $(shell find $(TSTD) -type f -name *.cpp)
-TEST_OBJF := $(shell find $(TSTD) -type f -name *.o)
+# TEST_SRCF := $(shell find $(TSTD) -type f -name *.cpp)
+# TEST_OBJF := $(shell find $(TSTD) -type f -name *.o)
 
 INC := -I $(INCD)
 
