@@ -4,10 +4,17 @@ pub enum TokenType {
     SubtractOp,
     MultiplyOp,
     Invalid,
+    Number,
 }
 
 pub struct Token {
     token_type: TokenType,
+}
+
+impl Token {
+    pub fn new(token_type: TokenType) -> Self {
+        return Self { token_type };
+    }
 }
 
 pub fn tokenize(input_stream: String) -> Vec<Token> {
@@ -17,11 +24,12 @@ pub fn tokenize(input_stream: String) -> Vec<Token> {
     while index < chars.len() {
         let ch: char = chars[index];
         match ch {
-            '+' => tokens.push( Token { token_type: TokenType::AddOp } ),
-            '-' => tokens.push( Token { token_type: TokenType::SubtractOp } ),
-            '*' => tokens.push( Token { token_type: TokenType::MultiplyOp } ),
+            '+' => tokens.push( Token::new(TokenType::AddOp) ),
+            '-' => tokens.push( Token::new(TokenType::SubtractOp) ),
+            '*' => tokens.push( Token::new(TokenType::MultiplyOp) ),
             ' ' => (), // do nothing
-            _ => tokens.push( Token { token_type: TokenType::Invalid } )
+            '.' | '0'..='9' => tokens.push( Token::new(TokenType::Number) ),
+            _ => tokens.push( Token::new(TokenType::Invalid) )
         }
         index += 1;
     }
@@ -35,7 +43,8 @@ pub fn print_token(token: Token) -> () {
         TokenType::AddOp => string = String::from("AddOp"),
         TokenType::MultiplyOp => string = String::from("MultiplyOp"),
         TokenType::SubtractOp => string = String::from("SubtractOp"),
-        TokenType::Invalid => string = String::from("Invalid")
+        TokenType::Number => string = String::from("Number"),
+        TokenType::Invalid => string = String::from("Invalid"),
     }
     println!("{string}");
 }
