@@ -6,7 +6,7 @@ pub enum TokenType {
     SubtractOp,
     MultiplyOp,
     DivideOp,
-    Number,
+    Number{value: usize},
     IllformedNumber,
     Invalid,
 }
@@ -30,7 +30,7 @@ impl fmt::Display for Token {
             TokenType::SubtractOp => String::from("SubtractOp"),
             TokenType::MultiplyOp => String::from("MultiplyOp"),
             TokenType::DivideOp => String::from("DivideOp"),
-            TokenType::Number => String::from("Number"),
+            TokenType::Number{value} => String::from(format!("Number{{{value}}}")),
             TokenType::IllformedNumber => String::from("Illformed Number"),
             TokenType::Invalid => String::from("Invalid"),
         };
@@ -50,15 +50,41 @@ pub fn tokenize(input_stream: String) -> Vec<Token> {
             '*' => tokens.push( Token::new(TokenType::MultiplyOp) ),
             '/' => tokens.push( Token::new(TokenType::DivideOp) ),
             ' ' => (), // do nothing
-            '.' | '0'..='9' => tokens.push( Token::new(TokenType::Number) ),
+            '.' | '0'..='9' => tokens.push( consume_number(&chars, &mut index) ),
             _ => tokens.push( Token::new(TokenType::Invalid) )
         }
         index += 1;
+        println!("In tokenize index incremented to: {index}");
+        println!("Found token: {}", tokens.last().unwrap());
     }
 
     return tokens;
 }
 
-// fn consume_number(chars: &Vec<char>, index: &mut usize) -> Token {
-//     match {}
-// }
+fn consume_number(chars: &Vec<char>, index: &mut usize) -> Token {
+    let mut value: usize = 0;
+    let mut is_reading: bool = true;
+    
+    while is_reading && *index < chars.len(){
+        let ch: char = chars[*index];
+        println!("In consume_number index incremented to: {index}");
+        match ch {
+            '0'..='9' => value = value * 10 + get_digit(&ch),
+            ' ' => is_reading = false,
+            '.' | _ => return Token::new(TokenType::IllformedNumber)
+        }
+        *index += 1;
+    }
+
+    // decrement index in prep 
+    *index -= 1;
+
+    return Token::new( 
+        TokenType::Number{ value }
+    );
+}
+
+fn get_digit(ch: &char) -> usize {
+    assert!(*ch >= '0' && *ch <= '9');
+    return ch.to_digit(10).unwrap() as usize;
+}
