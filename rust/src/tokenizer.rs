@@ -54,8 +54,6 @@ pub fn tokenize(input_stream: String) -> Vec<Token> {
             _ => tokens.push( Token::new(TokenType::Invalid) )
         }
         index += 1;
-        println!("In tokenize index incremented to: {index}");
-        println!("Found token: {}", tokens.last().unwrap());
     }
 
     return tokens;
@@ -67,7 +65,6 @@ fn consume_number(chars: &Vec<char>, index: &mut usize) -> Token {
     
     while is_reading && *index < chars.len(){
         let ch: char = chars[*index];
-        println!("In consume_number index incremented to: {index}");
         match ch {
             '0'..='9' => value = value * 10 + get_digit(&ch),
             ' ' => is_reading = false,
