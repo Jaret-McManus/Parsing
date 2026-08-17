@@ -1,38 +1,29 @@
 use core::fmt;
 
 // File to take in text and turn it into tokens
-pub enum TokenType {
+pub enum Token {
+    // regular tokens
     AddOp,
     SubtractOp,
     MultiplyOp,
     DivideOp,
     Number{value: usize},
+
+    // meta tokens
     IllformedNumber,
     Invalid,
 }
 
-pub struct Token {
-    token_type: TokenType,
-}
-
-impl Token {
-    
-    pub fn new(token_type: TokenType) -> Self {
-        return Self { token_type };
-    }
-    
-}
-
 impl fmt::Display for Token {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let string: String = match self.token_type {
-            TokenType::AddOp => String::from("AddOp"),
-            TokenType::SubtractOp => String::from("SubtractOp"),
-            TokenType::MultiplyOp => String::from("MultiplyOp"),
-            TokenType::DivideOp => String::from("DivideOp"),
-            TokenType::Number{value} => String::from(format!("Number{{{value}}}")),
-            TokenType::IllformedNumber => String::from("Illformed Number"),
-            TokenType::Invalid => String::from("Invalid"),
+        let string: String = match self {
+            Token::AddOp => String::from("AddOp"),
+            Token::SubtractOp => String::from("SubtractOp"),
+            Token::MultiplyOp => String::from("MultiplyOp"),
+            Token::DivideOp => String::from("DivideOp"),
+            Token::Number{value} => String::from(format!("Number{{{value}}}")),
+            Token::IllformedNumber => String::from("Illformed Number"),
+            Token::Invalid => String::from("Invalid"),
         };
         write!(f, "{string}") 
     }
@@ -45,13 +36,13 @@ pub fn tokenize(input_stream: String) -> Vec<Token> {
     while index < chars.len() {
         let ch: char = chars[index];
         match ch {
-            '+' => tokens.push( Token::new(TokenType::AddOp) ),
-            '-' => tokens.push( Token::new(TokenType::SubtractOp) ),
-            '*' => tokens.push( Token::new(TokenType::MultiplyOp) ),
-            '/' => tokens.push( Token::new(TokenType::DivideOp) ),
+            '+' => tokens.push( Token::AddOp ),
+            '-' => tokens.push( Token::SubtractOp ),
+            '*' => tokens.push( Token::MultiplyOp ),
+            '/' => tokens.push( Token::DivideOp ),
             ' ' => (), // do nothing
             '.' | '0'..='9' => tokens.push( consume_number(&chars, &mut index) ),
-            _ => tokens.push( Token::new(TokenType::Invalid) )
+            _ => tokens.push( Token::Invalid )
         }
         index += 1;
     }
@@ -68,7 +59,7 @@ fn consume_number(chars: &Vec<char>, index: &mut usize) -> Token {
         match ch {
             '0'..='9' => value = value * 10 + get_digit(&ch),
             ' ' => is_reading = false,
-            '.' | _ => return Token::new(TokenType::IllformedNumber)
+            '.' | _ => return Token::IllformedNumber
         }
         *index += 1;
     }
@@ -76,9 +67,7 @@ fn consume_number(chars: &Vec<char>, index: &mut usize) -> Token {
     // decrement index in prep 
     *index -= 1;
 
-    return Token::new( 
-        TokenType::Number{ value }
-    );
+    return Token::Number{ value };
 }
 
 fn get_digit(ch: &char) -> usize {
