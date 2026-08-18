@@ -4,6 +4,8 @@ use std::fs;
 mod tokenizer;
 use tokenizer::Token as Token;
 
+mod parser;
+
 fn main() {
     let args: Vec<String> = get_args();
 
